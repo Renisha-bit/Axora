@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.axora.ui.controller.DashboardController"
+            fitToWidth="true" styleClass="scroll-pane-clean">
+
+    <VBox spacing="24" styleClass="page-content">
+        <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+        <!-- Page header -->
+        <HBox alignment="CENTER_LEFT" spacing="16">
+            <Label text="Dashboard" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <!-- Period selector -->
+            <ComboBox fx:id="periodCombo" styleClass="combo-clean" prefWidth="170"/>
+        </HBox>
+
+        <!-- KPI cards row -->
+        <HBox spacing="16">
+            <!-- Income card -->
+            <VBox styleClass="kpi-card,kpi-income" HBox.hgrow="ALWAYS">
+                <Label text="Total Income" styleClass="kpi-label"/>
+                <Label fx:id="lblIncome" text="₹0.00" styleClass="kpi-value"/>
+            </VBox>
+            <!-- Expense card -->
+            <VBox styleClass="kpi-card,kpi-expense" HBox.hgrow="ALWAYS">
+                <Label text="Total Expenses" styleClass="kpi-label"/>
+                <Label fx:id="lblExpense" text="₹0.00" styleClass="kpi-value"/>
+            </VBox>
+            <!-- Net cash flow -->
+            <VBox styleClass="kpi-card,kpi-net" HBox.hgrow="ALWAYS">
+                <Label text="Net Cash Flow" styleClass="kpi-label"/>
+                <Label fx:id="lblNet" text="₹0.00" styleClass="kpi-value"/>
+            </VBox>
+        </HBox>
+
+        <!-- Charts row -->
+        <HBox spacing="16" minHeight="280">
+            <!-- Category pie chart -->
+            <VBox styleClass="chart-card" HBox.hgrow="ALWAYS">
+                <Label text="Expenses by Category" styleClass="card-title"/>
+                <StackPane fx:id="pieChartContainer" VBox.vgrow="ALWAYS" minHeight="240">
+                    <PieChart fx:id="categoryPieChart" styleClass="pie-chart" animated="false"/>
+                    <Label fx:id="pieEmptyLabel" text="No expense data for this period."
+                           styleClass="empty-state-label" visible="false"/>
+                </StackPane>
+            </VBox>
+
+            <!-- Monthly bar chart -->
+            <VBox styleClass="chart-card" HBox.hgrow="ALWAYS">
+                <Label text="Monthly Overview" styleClass="card-title"/>
+                <StackPane fx:id="barChartContainer" VBox.vgrow="ALWAYS" minHeight="240">
+                    <BarChart fx:id="monthlyBarChart" styleClass="bar-chart" animated="false" legendVisible="true">
+                        <xAxis><CategoryAxis fx:id="barXAxis" label="Month"/></xAxis>
+                        <yAxis><NumberAxis fx:id="barYAxis" label="Amount (₹)"/></yAxis>
+                    </BarChart>
+                    <Label fx:id="barEmptyLabel" text="No data for this year."
+                           styleClass="empty-state-label" visible="false"/>
+                </StackPane>
+            </VBox>
+        </HBox>
+
+        <!-- Recent transactions section -->
+        <VBox styleClass="chart-card" spacing="12">
+            <Label text="Recent Transactions" styleClass="card-title"/>
+            <TableView fx:id="recentTable" prefHeight="220" styleClass="table-clean">
+                <columns>
+                    <TableColumn fx:id="colDate"     text="Date"        prefWidth="100"/>
+                    <TableColumn fx:id="colType"     text="Type"        prefWidth="90"/>
+                    <TableColumn fx:id="colCategory" text="Category"    prefWidth="150"/>
+                    <TableColumn fx:id="colDesc"     text="Description" prefWidth="220"/>
+                    <TableColumn fx:id="colAmount"   text="Amount"      prefWidth="130" style="-fx-alignment: CENTER_RIGHT;"/>
+                </columns>
+                <placeholder>
+                    <Label text="No transactions yet. Add your first transaction!" styleClass="empty-state-label"/>
+                </placeholder>
+            </TableView>
+        </VBox>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.axora.ui.controller.MainController"
+            styleClass="root-pane">
+
+    <!-- ── Sidebar ── -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="220" spacing="0">
+            <!-- Brand -->
+            <VBox styleClass="brand-block" alignment="CENTER_LEFT">
+                <padding><Insets top="28" right="20" bottom="20" left="20"/></padding>
+                <Label text="Axora" styleClass="brand-name"/>
+                <Label text="Value in every choice." styleClass="brand-tagline"/>
+            </VBox>
+
+            <!-- Nav items -->
+            <VBox styleClass="nav-list" spacing="2" VBox.vgrow="ALWAYS">
+                <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
+                <Button fx:id="navDashboard"    text="⬛  Dashboard"    styleClass="nav-btn,nav-active" maxWidth="Infinity" onAction="#showDashboard"/>
+                <Button fx:id="navTransactions" text="↕  Transactions"  styleClass="nav-btn" maxWidth="Infinity" onAction="#showTransactions"/>
+                <Button fx:id="navBudgets"      text="⬡  Budgets"       styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
+                <Button fx:id="navRecurring"    text="↻  Recurring"     styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
+                <Button fx:id="navAccounts"     text="🏦  Accounts"     styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
+                <Button fx:id="navSavings"      text="◎  Savings Goals" styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
+                <Button fx:id="navReports"      text="📊  Reports"      styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
+            </VBox>
+
+            <!-- Settings at bottom -->
+            <VBox styleClass="sidebar-footer">
+                <padding><Insets top="8" right="12" bottom="20" left="12"/></padding>
+                <Button fx:id="navSettings" text="⚙  Settings" styleClass="nav-btn" maxWidth="Infinity"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- ── Content Area ── -->
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-area"/>
+    </center>
+
+</BorderPane>

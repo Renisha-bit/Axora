@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.axora.ui.controller.TransactionFormController"
+      spacing="20" styleClass="form-panel">
+
+    <padding><Insets top="32" right="40" bottom="32" left="40"/></padding>
+
+    <!-- Form title -->
+    <Label fx:id="formTitle" text="Add Transaction" styleClass="form-title"/>
+
+    <!-- Type toggle -->
+    <VBox spacing="6">
+        <Label text="Type *" styleClass="form-label"/>
+        <HBox spacing="0" styleClass="toggle-group">
+            <ToggleButton fx:id="btnIncome"  text="Income"  styleClass="toggle-btn-left"/>
+            <ToggleButton fx:id="btnExpense" text="Expense" styleClass="toggle-btn-right"/>
+        </HBox>
+    </VBox>
+
+    <!-- Amount -->
+    <VBox spacing="6">
+        <Label text="Amount (₹) *" styleClass="form-label"/>
+        <TextField fx:id="amountField" promptText="0.00" styleClass="text-field-clean form-field"/>
+    </VBox>
+
+    <!-- Category -->
+    <VBox spacing="6">
+        <Label text="Category *" styleClass="form-label"/>
+        <ComboBox fx:id="categoryCombo" styleClass="combo-clean form-field" maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Date -->
+    <VBox spacing="6">
+        <Label text="Date *" styleClass="form-label"/>
+        <DatePicker fx:id="datePicker" styleClass="date-picker-clean form-field" maxWidth="Infinity"/>
+    </VBox>
+
+    <!-- Description -->
+    <VBox spacing="6">
+        <Label text="Description" styleClass="form-label"/>
+        <TextField fx:id="descField" promptText="What was this for?" styleClass="text-field-clean form-field"/>
+    </VBox>
+
+    <!-- Merchant -->
+    <VBox spacing="6">
+        <Label text="Merchant / Source" styleClass="form-label"/>
+        <TextField fx:id="merchantField" promptText="Optional" styleClass="text-field-clean form-field"/>
+    </VBox>
+
+    <!-- Validation errors -->
+    <Label fx:id="errorLabel" text="" styleClass="error-label" wrapText="true" visible="false"/>
+
+    <!-- Action buttons -->
+    <HBox spacing="12" alignment="CENTER_RIGHT">
+        <Button text="Cancel" styleClass="btn-ghost" onAction="#cancel"/>
+        <Button fx:id="saveBtn" text="Save" styleClass="btn-primary" onAction="#save"/>
+    </HBox>
+
+</VBox>

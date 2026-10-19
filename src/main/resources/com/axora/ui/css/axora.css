@@ -1,0 +1,430 @@
+/* =====================================================================
+   Axora — Application Stylesheet
+   Palette:
+     --bg-soft       : #FBEFEF   (root background)
+     --surface       : #FFE2E2   (secondary surface / cards)
+     --accent-pink   : #F5CBCB   (hover, accent)
+     --accent-purple : #C5B3D3   (primary brand accent)
+     --sidebar-bg    : #2D2340   (deep purple sidebar)
+     --text-primary  : #2C1F3A
+     --text-secondary: #6B5B7A
+     --success       : #4CAF50
+     --danger        : #E57373
+   ===================================================================== */
+
+/* ── Root ─────────────────────────────────────────────────────────── */
+
+.root-pane {
+    -fx-background-color: #FBEFEF;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────── */
+
+.sidebar {
+    -fx-background-color: #2D2340;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 12, 0, 2, 0);
+}
+
+.brand-block {
+    -fx-background-color: #231A34;
+}
+
+.brand-name {
+    -fx-text-fill: #E8DCFF;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1px;
+}
+
+.brand-tagline {
+    -fx-text-fill: #A094B4;
+    -fx-font-size: 10px;
+    -fx-wrap-text: true;
+}
+
+/* Navigation buttons */
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #C5B8D8;
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+}
+
+.nav-btn:hover {
+    -fx-background-color: rgba(197, 179, 211, 0.15);
+    -fx-text-fill: #E8DCFF;
+}
+
+.nav-btn.nav-active {
+    -fx-background-color: rgba(197, 179, 211, 0.25);
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent transparent transparent #C5B3D3;
+    -fx-border-width: 0 0 0 3;
+}
+
+.nav-btn.nav-coming-soon {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
+}
+
+.sidebar-footer {
+    -fx-border-color: rgba(197,179,211,0.15) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ── Content area ─────────────────────────────────────────────────── */
+
+.content-area {
+    -fx-background-color: #FBEFEF;
+}
+
+.scroll-pane-clean {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane-clean > .viewport {
+    -fx-background-color: transparent;
+}
+
+.page-content {
+    -fx-background-color: transparent;
+}
+
+.page-content-plain {
+    -fx-background-color: #FBEFEF;
+}
+
+/* ── Typography ───────────────────────────────────────────────────── */
+
+.page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C1F3A;
+}
+
+.card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C1F3A;
+    -fx-padding: 0 0 8 0;
+}
+
+.form-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C1F3A;
+}
+
+.form-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4A3558;
+}
+
+.empty-state-label {
+    -fx-text-fill: #A094B4;
+    -fx-font-size: 14px;
+    -fx-font-style: italic;
+    -fx-padding: 24;
+}
+
+.empty-state-sublabel {
+    -fx-text-fill: #C5B3D3;
+    -fx-font-size: 12px;
+}
+
+.results-label {
+    -fx-text-fill: #6B5B7A;
+    -fx-font-size: 13px;
+}
+
+.error-label {
+    -fx-text-fill: #C62828;
+    -fx-font-size: 13px;
+    -fx-background-color: #FFCDD2;
+    -fx-padding: 8 12 8 12;
+    -fx-background-radius: 6;
+    -fx-wrap-text: true;
+}
+
+/* ── KPI Cards ────────────────────────────────────────────────────── */
+
+.kpi-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 20 24 20 24;
+    -fx-spacing: 6;
+    -fx-effect: dropshadow(gaussian, rgba(197,179,211,0.25), 10, 0, 0, 3);
+}
+
+.kpi-label {
+    -fx-text-fill: #6B5B7A;
+    -fx-font-size: 13px;
+}
+
+.kpi-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C1F3A;
+}
+
+.kpi-income  .kpi-value { -fx-text-fill: #2E7D32; }
+.kpi-expense .kpi-value { -fx-text-fill: #C62828; }
+
+.kpi-positive { -fx-text-fill: #2E7D32 !important; }
+.kpi-negative { -fx-text-fill: #C62828 !important; }
+
+/* ── Chart Cards ──────────────────────────────────────────────────── */
+
+.chart-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 20 24 20 24;
+    -fx-spacing: 0;
+    -fx-effect: dropshadow(gaussian, rgba(197,179,211,0.20), 10, 0, 0, 3);
+}
+
+.pie-chart { -fx-background-color: transparent; }
+.bar-chart  { -fx-background-color: transparent; }
+
+/* ── Page header / filter bar ─────────────────────────────────────── */
+
+.page-header {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #F5CBCB transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.filter-bar {
+    -fx-background-color: #FFF5F5;
+    -fx-border-color: transparent transparent #F5CBCB transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.results-bar {
+    -fx-background-color: #FBEFEF;
+    -fx-border-color: transparent transparent #F5CBCB transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────── */
+
+.btn-primary {
+    -fx-background-color: #C5B3D3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 10 24 10 24;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #B09EC4;
+}
+
+.btn-secondary {
+    -fx-background-color: #F5CBCB;
+    -fx-text-fill: #4A3558;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 18 8 18;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.btn-secondary:hover { -fx-background-color: #EDB9B9; }
+
+.btn-ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6B5B7A;
+    -fx-font-size: 13px;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-color: #C5B3D3;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+}
+
+.btn-ghost:hover {
+    -fx-background-color: #F5CBCB;
+    -fx-text-fill: #2C1F3A;
+}
+
+.btn-ghost-sm {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6B5B7A;
+    -fx-font-size: 12px;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-border-color: #C5B3D3;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+}
+
+.btn-ghost-sm:hover {
+    -fx-background-color: #F5CBCB;
+}
+
+.btn-danger-sm {
+    -fx-background-color: transparent;
+    -fx-text-fill: #C62828;
+    -fx-font-size: 12px;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-border-color: #FFCDD2;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+}
+
+.btn-danger-sm:hover {
+    -fx-background-color: #FFCDD2;
+}
+
+/* ── Form controls ────────────────────────────────────────────────── */
+
+.text-field-clean {
+    -fx-background-color: white;
+    -fx-border-color: #E0D0F0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-text-fill: #2C1F3A;
+    -fx-font-size: 14px;
+}
+
+.text-field-clean:focused {
+    -fx-border-color: #C5B3D3;
+    -fx-effect: dropshadow(gaussian, rgba(197,179,211,0.4), 6, 0, 0, 0);
+}
+
+.form-field {
+    -fx-pref-width: 320;
+}
+
+.combo-clean {
+    -fx-background-color: white;
+    -fx-border-color: #E0D0F0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 2 0 2 0;
+}
+
+.combo-clean:focused { -fx-border-color: #C5B3D3; }
+
+.combo-clean .list-cell {
+    -fx-padding: 6 12 6 12;
+    -fx-text-fill: #2C1F3A;
+    -fx-background-color: transparent;
+}
+
+.date-picker-clean .text-field {
+    -fx-background-color: white;
+    -fx-border-color: #E0D0F0;
+    -fx-border-radius: 8 0 0 8;
+    -fx-background-radius: 8 0 0 8;
+    -fx-padding: 8 12 8 12;
+}
+
+/* ── Toggle buttons ───────────────────────────────────────────────── */
+
+.toggle-group {
+    -fx-background-color: #F5E8FF;
+    -fx-background-radius: 8;
+    -fx-padding: 2;
+}
+
+.toggle-btn-left, .toggle-btn-right {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6B5B7A;
+    -fx-font-size: 13px;
+    -fx-padding: 7 24 7 24;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.toggle-btn-left  { -fx-background-radius: 6 0 0 6; }
+.toggle-btn-right { -fx-background-radius: 0 6 6 0; }
+
+.toggle-btn-left:selected, .toggle-btn-right:selected {
+    -fx-background-color: #C5B3D3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* ── Tables ───────────────────────────────────────────────────────── */
+
+.table-clean {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: #F5CBCB;
+}
+
+.table-clean .column-header-background {
+    -fx-background-color: #F5E8FF;
+}
+
+.table-clean .column-header .label {
+    -fx-text-fill: #4A3558;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.table-clean .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #FFF0F0 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-clean .table-row-cell:hover {
+    -fx-background-color: #FFF8FF;
+}
+
+.table-clean .table-row-cell:selected {
+    -fx-background-color: #F0E8FF;
+}
+
+.row-income  { -fx-border-color: transparent transparent transparent #4CAF50;
+               -fx-border-width: 0 0 0 3; }
+.row-expense { -fx-border-color: transparent transparent transparent #E57373;
+               -fx-border-width: 0 0 0 3; }
+
+/* ── Form panel (modal) ───────────────────────────────────────────── */
+
+.form-panel {
+    -fx-background-color: #FBEFEF;
+    -fx-min-width: 420;
+    -fx-max-width: 520;
+}
+
+/* ── Scroll bar cleanup ───────────────────────────────────────────── */
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #C5B3D3;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}

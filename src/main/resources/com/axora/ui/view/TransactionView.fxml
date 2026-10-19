@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.axora.ui.controller.TransactionController"
+      spacing="0" styleClass="page-content-plain">
+
+    <!-- Header bar -->
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="12">
+        <padding><Insets top="24" right="32" bottom="16" left="32"/></padding>
+        <Label text="Transactions" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="+ Add Transaction" styleClass="btn-primary" onAction="#openAddForm"/>
+    </HBox>
+
+    <!-- Filter bar -->
+    <VBox styleClass="filter-bar" spacing="10">
+        <padding><Insets top="12" right="32" bottom="12" left="32"/></padding>
+        <FlowPane hgap="10" vgap="8" alignment="CENTER_LEFT">
+            <!-- Quick date range -->
+            <ComboBox fx:id="periodCombo" styleClass="combo-clean" prefWidth="150"/>
+            <!-- Type filter -->
+            <ComboBox fx:id="typeCombo" promptText="All Types" styleClass="combo-clean" prefWidth="130"/>
+            <!-- Category filter -->
+            <ComboBox fx:id="categoryCombo" promptText="All Categories" styleClass="combo-clean" prefWidth="170"/>
+            <!-- Keyword -->
+            <TextField fx:id="keywordField" promptText="Search description / merchant…"
+                       styleClass="text-field-clean" prefWidth="220"/>
+            <!-- Amount range -->
+            <TextField fx:id="minAmountField" promptText="Min ₹" styleClass="text-field-clean" prefWidth="90"/>
+            <TextField fx:id="maxAmountField" promptText="Max ₹" styleClass="text-field-clean" prefWidth="90"/>
+            <!-- Actions -->
+            <Button text="Apply" styleClass="btn-secondary" onAction="#applyFilters"/>
+            <Button text="Clear" styleClass="btn-ghost"    onAction="#clearFilters"/>
+        </FlowPane>
+    </VBox>
+
+    <!-- Results info bar -->
+    <HBox styleClass="results-bar" alignment="CENTER_LEFT" spacing="8">
+        <padding><Insets top="6" right="32" bottom="6" left="32"/></padding>
+        <Label fx:id="resultsLabel" text="" styleClass="results-label"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Export CSV" styleClass="btn-ghost-sm" onAction="#exportCsv"/>
+    </HBox>
+
+    <!-- Transaction table -->
+    <TableView fx:id="transactionTable" VBox.vgrow="ALWAYS" styleClass="table-clean">
+        <columns>
+            <TableColumn fx:id="colDate"     text="Date"        prefWidth="105"/>
+            <TableColumn fx:id="colType"     text="Type"        prefWidth="90"/>
+            <TableColumn fx:id="colCategory" text="Category"    prefWidth="160"/>
+            <TableColumn fx:id="colDesc"     text="Description" prefWidth="240"/>
+            <TableColumn fx:id="colMerchant" text="Merchant"    prefWidth="140"/>
+            <TableColumn fx:id="colAmount"   text="Amount"      prefWidth="130" style="-fx-alignment: CENTER_RIGHT;"/>
+            <TableColumn fx:id="colActions"  text=""            prefWidth="100"/>
+        </columns>
+        <placeholder>
+            <VBox alignment="CENTER" spacing="8">
+                <Label text="No transactions found." styleClass="empty-state-label"/>
+                <Label text="Add a transaction to get started." styleClass="empty-state-sublabel"/>
+            </VBox>
+        </placeholder>
+    </TableView>
+
+</VBox>
