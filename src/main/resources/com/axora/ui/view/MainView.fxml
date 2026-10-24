@@ -23,17 +23,17 @@
                 <padding><Insets top="8" right="12" bottom="8" left="12"/></padding>
                 <Button fx:id="navDashboard"    text="⬛  Dashboard"    styleClass="nav-btn,nav-active" maxWidth="Infinity" onAction="#showDashboard"/>
                 <Button fx:id="navTransactions" text="↕  Transactions"  styleClass="nav-btn" maxWidth="Infinity" onAction="#showTransactions"/>
-                <Button fx:id="navBudgets"      text="⬡  Budgets"       styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
-                <Button fx:id="navRecurring"    text="↻  Recurring"     styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
-                <Button fx:id="navAccounts"     text="🏦  Accounts"     styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
-                <Button fx:id="navSavings"      text="◎  Savings Goals" styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
-                <Button fx:id="navReports"      text="📊  Reports"      styleClass="nav-btn,nav-coming-soon" maxWidth="Infinity"/>
+                <Button fx:id="navBudgets"      text="⬡  Budgets"       styleClass="nav-btn" maxWidth="Infinity" onAction="#showBudgets"/>
+                <Button fx:id="navRecurring"    text="↻  Recurring"     styleClass="nav-btn" maxWidth="Infinity" onAction="#showRecurring"/>
+                <Button fx:id="navAccounts"     text="🏦  Accounts"     styleClass="nav-btn" maxWidth="Infinity" onAction="#showAccounts"/>
+                <Button fx:id="navSavings"      text="◎  Savings Goals" styleClass="nav-btn" maxWidth="Infinity" onAction="#showSavings"/>
+                <Button fx:id="navReports"      text="📊  Reports"      styleClass="nav-btn" maxWidth="Infinity" onAction="#showReports"/>
             </VBox>
 
             <!-- Settings at bottom -->
             <VBox styleClass="sidebar-footer">
                 <padding><Insets top="8" right="12" bottom="20" left="12"/></padding>
-                <Button fx:id="navSettings" text="⚙  Settings" styleClass="nav-btn" maxWidth="Infinity"/>
+                <Button fx:id="navSettings" text="⚙  Settings" styleClass="nav-btn" maxWidth="Infinity" onAction="#showSettings"/>
             </VBox>
         </VBox>
     </left>

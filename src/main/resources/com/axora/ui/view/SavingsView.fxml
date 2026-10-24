@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.axora.ui.controller.SavingsController"
+      spacing="0" styleClass="page-content-plain">
+
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="12">
+        <padding><Insets top="24" right="32" bottom="8" left="32"/></padding>
+        <Label text="Savings Goals" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="+ New Goal" styleClass="btn-primary" onAction="#openCreate"/>
+    </HBox>
+
+    <HBox styleClass="results-bar" alignment="CENTER_LEFT">
+        <padding><Insets top="0" right="32" bottom="8" left="32"/></padding>
+        <Label fx:id="summaryLabel" text="" styleClass="hint-label"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane-clean">
+        <VBox spacing="12">
+            <padding><Insets top="8" right="32" bottom="32" left="32"/></padding>
+            <VBox fx:id="cardsBox" spacing="12"/>
+            <VBox fx:id="emptyBox" alignment="CENTER" spacing="8" visible="false" managed="false">
+                <padding><Insets top="40" right="0" bottom="0" left="0"/></padding>
+                <Label text="No savings goals yet." styleClass="empty-state-label"/>
+                <Label text="Create a goal, then record contributions as you save." styleClass="empty-state-sublabel"/>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>

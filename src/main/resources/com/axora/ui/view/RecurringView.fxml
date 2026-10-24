@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.axora.ui.controller.RecurringController"
+      spacing="0" styleClass="page-content-plain">
+
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="12">
+        <padding><Insets top="24" right="32" bottom="12" left="32"/></padding>
+        <Label text="Recurring Transactions" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Generate due now" styleClass="btn-secondary" onAction="#generateNow"/>
+        <Button text="+ New Rule" styleClass="btn-primary" onAction="#openCreate"/>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT">
+        <padding><Insets top="0" right="32" bottom="10" left="32"/></padding>
+        <Label fx:id="statusLabel" text="" styleClass="success-label" visible="false" managed="false"/>
+    </HBox>
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <Tab text="Scheduled rules">
+            <VBox spacing="8">
+                <padding><Insets top="8" right="16" bottom="24" left="16"/></padding>
+                <Label text="Rules define what will be created. Edits apply to future occurrences only; transactions already generated are never changed." styleClass="hint-label"/>
+                <TableView fx:id="ruleTable" VBox.vgrow="ALWAYS" styleClass="table-clean"/>
+            </VBox>
+        </Tab>
+        <Tab text="Upcoming (next 60 days)">
+            <VBox spacing="8">
+                <padding><Insets top="8" right="16" bottom="24" left="16"/></padding>
+                <Label fx:id="upcomingLabel" text="" styleClass="hint-label"/>
+                <TableView fx:id="upcomingTable" VBox.vgrow="ALWAYS" styleClass="table-clean"/>
+            </VBox>
+        </Tab>
+        <Tab text="Generated history">
+            <VBox spacing="8">
+                <padding><Insets top="8" right="16" bottom="24" left="16"/></padding>
+                <Label text="Real transactions that were created by a rule. They also appear in Transactions and count toward budgets, accounts and reports." styleClass="hint-label"/>
+                <TableView fx:id="historyTable" VBox.vgrow="ALWAYS" styleClass="table-clean"/>
+            </VBox>
+        </Tab>
+    </TabPane>
+</VBox>

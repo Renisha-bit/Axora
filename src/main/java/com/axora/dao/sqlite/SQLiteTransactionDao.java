@@ -24,19 +24,23 @@ public class SQLiteTransactionDao implements TransactionDao {
     @Override
     public long insert(Transaction tx) {
         String sql = """
-            INSERT INTO transactions(type, amount_cents, category_id, tx_date, description, merchant)
-            VALUES(?,?,?,?,?,?)
+            INSERT INTO transactions(type, amount_cents, category_id, tx_date, description, merchant,
+                                     account_id, recurring_rule_id)
+            VALUES(?,?,?,?,?,?,COALESCE(NULLIF(?,0),(SELECT id FROM accounts ORDER BY is_default DESC, id LIMIT 1)),NULLIF(?,0))
             """;
-        try (PreparedStatement ps = db.getConnection().prepareStatement(sql,
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = db.getConnection().prepareStatement(sql)) {
             ps.setString(1, tx.getType().name());
             ps.setLong(2, tx.getAmountCents());
             ps.setLong(3, tx.getCategoryId());
             ps.setString(4, tx.getTxDate().toString());
             ps.setString(5, tx.getDescription());
             ps.setString(6, tx.getMerchant());
+            ps.setLong(7, tx.getAccountId());
+            ps.setLong(8, tx.getRecurringRuleId());
             ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
+            // last_insert_rowid() works on every sqlite-jdbc build (getGeneratedKeys does not).
+            try (Statement st = db.getConnection().createStatement();
+                 ResultSet rs = st.executeQuery("SELECT last_insert_rowid()")) {
                 return rs.next() ? rs.getLong(1) : -1;
             }
         } catch (SQLException e) {
@@ -49,7 +53,7 @@ public class SQLiteTransactionDao implements TransactionDao {
         String sql = """
             UPDATE transactions
             SET type=?, amount_cents=?, category_id=?, tx_date=?,
-                description=?, merchant=?, updated_at=datetime('now')
+                description=?, merchant=?, account_id=COALESCE(NULLIF(?,0),(SELECT id FROM accounts ORDER BY is_default DESC, id LIMIT 1)), updated_at=datetime('now')
             WHERE id=?
             """;
         try (PreparedStatement ps = db.getConnection().prepareStatement(sql)) {
@@ -59,7 +63,8 @@ public class SQLiteTransactionDao implements TransactionDao {
             ps.setString(4, tx.getTxDate().toString());
             ps.setString(5, tx.getDescription());
             ps.setString(6, tx.getMerchant());
-            ps.setLong(7, tx.getId());
+            ps.setLong(7, tx.getAccountId());
+            ps.setLong(8, tx.getId());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update transaction", e);
@@ -80,8 +85,8 @@ public class SQLiteTransactionDao implements TransactionDao {
     @Override
     public Optional<Transaction> findById(long id) {
         try (PreparedStatement ps = db.getConnection().prepareStatement(
-                "SELECT t.*, c.name AS cat_name FROM transactions t " +
-                "JOIN categories c ON c.id = t.category_id WHERE t.id = ?")) {
+                "SELECT t.*, c.name AS cat_name, a.name AS acct_name FROM transactions t " +
+                "JOIN categories c ON c.id = t.category_id LEFT JOIN accounts a ON a.id = t.account_id WHERE t.id = ?")) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? Optional.of(map(rs)) : Optional.empty();
@@ -94,8 +99,8 @@ public class SQLiteTransactionDao implements TransactionDao {
     @Override
     public List<Transaction> findAll() {
         return query(
-            "SELECT t.*, c.name AS cat_name FROM transactions t " +
-            "JOIN categories c ON c.id = t.category_id " +
+            "SELECT t.*, c.name AS cat_name, a.name AS acct_name FROM transactions t " +
+            "JOIN categories c ON c.id = t.category_id LEFT JOIN accounts a ON a.id = t.account_id " +
             "ORDER BY t.tx_date DESC, t.id DESC",
             ps -> {}
         );
@@ -108,8 +113,8 @@ public class SQLiteTransactionDao implements TransactionDao {
     @Override
     public List<Transaction> findByFilter(TransactionFilter f) {
         StringBuilder sql = new StringBuilder(
-            "SELECT t.*, c.name AS cat_name FROM transactions t " +
-            "JOIN categories c ON c.id = t.category_id WHERE 1=1"
+            "SELECT t.*, c.name AS cat_name, a.name AS acct_name FROM transactions t " +
+            "JOIN categories c ON c.id = t.category_id LEFT JOIN accounts a ON a.id = t.account_id WHERE 1=1"
         );
         List<Object> params = new ArrayList<>();
 
@@ -124,6 +129,9 @@ public class SQLiteTransactionDao implements TransactionDao {
         }
         if (f.getCategoryId() != null) {
             sql.append(" AND t.category_id = ?"); params.add(f.getCategoryId());
+        }
+        if (f.getAccountId() != null) {
+            sql.append(" AND t.account_id = ?"); params.add(f.getAccountId());
         }
         if (f.getKeyword() != null && !f.getKeyword().isBlank()) {
             sql.append(" AND (LOWER(t.description) LIKE ? OR LOWER(t.merchant) LIKE ?)");
@@ -265,6 +273,9 @@ public class SQLiteTransactionDao implements TransactionDao {
         tx.setCategoryId(rs.getLong("category_id"));
         tx.setCategoryName(rs.getString("cat_name"));
         tx.setTxDate(LocalDate.parse(rs.getString("tx_date")));
+        tx.setAccountId(rs.getLong("account_id"));          // NULL -> 0
+        tx.setAccountName(rs.getString("acct_name"));
+        tx.setRecurringRuleId(rs.getLong("recurring_rule_id"));
         tx.setDescription(rs.getString("description"));
         tx.setMerchant(rs.getString("merchant"));
         String createdAt = rs.getString("created_at");

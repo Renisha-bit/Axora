@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.axora.ui.controller.BudgetController"
+      spacing="0" styleClass="page-content-plain">
+
+    <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="12">
+        <padding><Insets top="24" right="32" bottom="16" left="32"/></padding>
+        <Label text="Budgets" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="+ New Budget" styleClass="btn-primary" onAction="#openCreate"/>
+    </HBox>
+
+    <VBox styleClass="filter-bar" spacing="10">
+        <padding><Insets top="12" right="32" bottom="12" left="32"/></padding>
+        <FlowPane hgap="10" vgap="8" alignment="CENTER_LEFT">
+            <Label text="Period" styleClass="form-label"/>
+            <ComboBox fx:id="periodFilter" styleClass="combo-clean" prefWidth="150"/>
+            <Label text="Status as of" styleClass="form-label"/>
+            <DatePicker fx:id="asOfPicker" prefWidth="150"/>
+            <Button text="Today" styleClass="btn-ghost" onAction="#resetToday"/>
+        </FlowPane>
+    </VBox>
+
+    <HBox styleClass="results-bar" alignment="CENTER_LEFT" spacing="8">
+        <padding><Insets top="6" right="32" bottom="6" left="32"/></padding>
+        <Label fx:id="summaryLabel" text="" styleClass="results-label"/>
+    </HBox>
+
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane-clean">
+        <VBox spacing="12">
+            <padding><Insets top="8" right="32" bottom="32" left="32"/></padding>
+            <VBox fx:id="cardsBox" spacing="12"/>
+            <VBox fx:id="emptyBox" alignment="CENTER" spacing="8" visible="false" managed="false">
+                <padding><Insets top="40" right="0" bottom="0" left="0"/></padding>
+                <Label fx:id="emptyTitle" text="No budgets yet." styleClass="empty-state-label"/>
+                <Label fx:id="emptySub" text="Create a budget to track spending against a limit." styleClass="empty-state-sublabel"/>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+</VBox>

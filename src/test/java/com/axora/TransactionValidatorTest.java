@@ -42,6 +42,21 @@ class TransactionValidatorTest {
     }
 
     @Test
+    void fractionalCentAmountIsInvalid() {
+        List<String> errors = TransactionValidator.validate(
+            Transaction.Type.EXPENSE, "1.001", 1L, LocalDate.now(), "");
+        assertTrue(errors.stream().anyMatch(e -> e.contains("fractions of a cent")));
+    }
+
+    @Test
+    void trailingZeroBeyondCentsIsAllowed() {
+        List<String> errors = TransactionValidator.validate(
+            Transaction.Type.EXPENSE, "1.000", 1L, LocalDate.now(), "");
+        assertTrue(errors.isEmpty());
+        assertEquals(100L, TransactionValidator.parseCents("1.000"));
+    }
+
+    @Test
     void futureDataIsInvalid() {
         List<String> errors = TransactionValidator.validate(
             Transaction.Type.EXPENSE, "100", 1L, LocalDate.now().plusDays(5), "");

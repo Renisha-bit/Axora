@@ -1,11 +1,9 @@
 package com.axora.app;
 
-import com.axora.config.AppConfig;
 import com.axora.dao.sqlite.DatabaseManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -21,6 +19,13 @@ public class AxoraApp extends Application {
     public void start(Stage primaryStage) throws IOException {
         // Initialize database
         DatabaseManager.getInstance().initialize();
+        // Create any recurring transactions that became due since the last launch (idempotent).
+        try {
+            int n = new com.axora.service.RecurringService().generateDue(java.time.LocalDate.now());
+            if (n > 0) System.out.println("Axora: generated " + n + " recurring transaction(s).");
+        } catch (RuntimeException e) {
+            System.err.println("Axora: recurring generation failed: " + e.getMessage());
+        }
 
         URL fxml = getClass().getResource("/com/axora/ui/view/MainView.fxml");
         if (fxml == null) {

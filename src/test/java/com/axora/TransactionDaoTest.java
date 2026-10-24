@@ -24,44 +24,8 @@ class TransactionDaoTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Wire an in-memory SQLite database into the singleton DatabaseManager
-        Connection conn = DriverManager.getConnection("jdbc:sqlite::memory:");
-        try (var st = conn.createStatement()) {
-            st.execute("PRAGMA foreign_keys = ON");
-            st.execute("""
-                CREATE TABLE schema_meta (
-                    key TEXT PRIMARY KEY, value TEXT NOT NULL)
-                """);
-            st.execute("""
-                CREATE TABLE categories (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL UNIQUE,
-                    type TEXT NOT NULL,
-                    color TEXT,
-                    is_default INTEGER NOT NULL DEFAULT 0)
-                """);
-            st.execute("""
-                CREATE TABLE transactions (
-                    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-                    type         TEXT NOT NULL,
-                    amount_cents INTEGER NOT NULL,
-                    category_id  INTEGER NOT NULL REFERENCES categories(id),
-                    tx_date      TEXT NOT NULL,
-                    description  TEXT,
-                    merchant     TEXT,
-                    created_at   TEXT NOT NULL DEFAULT (datetime('now')),
-                    updated_at   TEXT NOT NULL DEFAULT (datetime('now')))
-                """);
-            st.execute("CREATE INDEX idx_tx_date ON transactions(tx_date)");
-            // Seed one category for tests
-            st.execute("INSERT INTO categories(name,type,is_default) VALUES('Food','EXPENSE',1)");
-            st.execute("INSERT INTO categories(name,type,is_default) VALUES('Salary','INCOME',1)");
-        }
-        // Inject connection into singleton via reflection
-        Field field = DatabaseManager.class.getDeclaredField("connection");
-        field.setAccessible(true);
-        field.set(DatabaseManager.getInstance(), conn);
-
+        // Real schema (all migrations) in a fresh in-memory database
+        TestDb.withLegacyCategories();
         dao = new SQLiteTransactionDao();
     }
 

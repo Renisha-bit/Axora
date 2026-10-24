@@ -10,7 +10,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -26,11 +25,10 @@ public class DashboardController {
 
     @FXML private ComboBox<String>      periodCombo;
     @FXML private Label                 lblIncome, lblExpense, lblNet;
+    @FXML private Label                 lblBalance, lblBalanceSub, lblBudgets, lblBudgetsSub, lblUpcoming, lblUpcomingSub, lblGoals, lblGoalsSub;
     @FXML private PieChart              categoryPieChart;
     @FXML private Label                 pieEmptyLabel;
     @FXML private BarChart<String, Number> monthlyBarChart;
-    @FXML private CategoryAxis          barXAxis;
-    @FXML private NumberAxis            barYAxis;
     @FXML private Label                 barEmptyLabel;
     @FXML private TableView<Transaction> recentTable;
     @FXML private TableColumn<Transaction, String> colDate, colType, colCategory, colDesc, colAmount;
@@ -42,11 +40,38 @@ public class DashboardController {
         setupPeriodCombo();
         setupTable();
         refresh();
+        loadOverview();
     }
 
     // ----------------------------------------------------------------
     // Setup
     // ----------------------------------------------------------------
+
+    private void loadOverview() {
+        UiKit.async(() -> new com.axora.service.OverviewService().build(java.time.LocalDate.now()), o -> {
+            var it = o.balancesByCurrency().entrySet().iterator();
+            if (!it.hasNext()) { lblBalance.setText("—"); lblBalanceSub.setText("No accounts"); }
+            else {
+                var first = it.next();
+                lblBalance.setText(UiKit.money(first.getValue(), first.getKey()));
+                lblBalanceSub.setText(o.balancesByCurrency().size() > 1
+                    ? "+ " + (o.balancesByCurrency().size() - 1) + " other currenc" + (o.balancesByCurrency().size() == 2 ? "y" : "ies") + " (see Accounts)"
+                    : "Across all accounts");
+            }
+            if (o.budgetCount() == 0) { lblBudgets.setText("None"); lblBudgetsSub.setText("No budgets set"); }
+            else {
+                lblBudgets.setText(o.budgetsExceeded() > 0 ? o.budgetsExceeded() + " over" : o.budgetsNearLimit() > 0 ? o.budgetsNearLimit() + " near limit" : "All on track");
+                lblBudgetsSub.setText(o.budgetCount() + " budget" + (o.budgetCount() == 1 ? "" : "s") + " this period");
+            }
+            lblUpcoming.setText(String.valueOf(o.upcomingCount()));
+            lblUpcomingSub.setText(o.upcomingCount() == 0 ? "No recurring items" : UiKit.money(o.upcomingExpenseCents()) + " in expenses");
+            if (o.goalCount() == 0) { lblGoals.setText("None"); lblGoalsSub.setText("No goals yet"); }
+            else {
+                lblGoals.setText(o.goalsCompleted() + " / " + o.goalCount() + " done");
+                lblGoalsSub.setText(UiKit.money(o.goalsSavedCents()) + " of " + UiKit.money(o.goalsTargetCents()));
+            }
+        }, ex -> { lblBalance.setText("—"); lblBalanceSub.setText("Unavailable"); });
+    }
 
     private void setupPeriodCombo() {
         periodCombo.setItems(FXCollections.observableArrayList(
@@ -111,9 +136,10 @@ public class DashboardController {
         };
 
         task.setOnSucceeded(e -> applyData(task.getValue()));
-        task.setOnFailed(e -> {
-            task.getException().printStackTrace();
-        });
+        task.setOnFailed(e -> new Alert(
+            Alert.AlertType.ERROR,
+            "Failed to load dashboard data: " + task.getException()
+        ).showAndWait());
 
         Thread t = new Thread(task, "axora-dashboard");
         t.setDaemon(true);
@@ -169,7 +195,8 @@ public class DashboardController {
             incomeSeries.getData().add(new XYChart.Data<>(mo, mt.incomeCents() / 100.0));
             expenseSeries.getData().add(new XYChart.Data<>(mo, mt.expenseCents() / 100.0));
         }
-        monthlyBarChart.getData().addAll(incomeSeries, expenseSeries);
+        monthlyBarChart.getData().add(incomeSeries);
+        monthlyBarChart.getData().add(expenseSeries);
     }
 
     // ----------------------------------------------------------------
