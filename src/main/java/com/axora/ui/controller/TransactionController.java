@@ -30,13 +30,14 @@ public class TransactionController {
     @FXML private ComboBox<String>      periodCombo;
     @FXML private ComboBox<String>      typeCombo;
     @FXML private ComboBox<Category>    categoryCombo;
+    @FXML private ComboBox<com.axora.model.Account> accountCombo;
     @FXML private TextField             keywordField;
     @FXML private TextField             minAmountField;
     @FXML private TextField             maxAmountField;
     @FXML private Label                 resultsLabel;
     @FXML private TableView<Transaction> transactionTable;
     @FXML private TableColumn<Transaction, String> colDate, colType, colCategory,
-                                                   colDesc, colMerchant, colAmount;
+                                                   colDesc, colMerchant, colAmount, colAccount, colSource;
     @FXML private TableColumn<Transaction, Void>   colActions;
 
     private final TransactionService service = new TransactionService();
@@ -46,6 +47,7 @@ public class TransactionController {
         setupPeriodCombo();
         setupTypeCombo();
         setupCategoryCombo();
+        setupAccountCombo();
         setupTable();
         loadTransactions(buildFilter());
     }
@@ -75,7 +77,21 @@ public class TransactionController {
         categoryCombo.setValue(all);
     }
 
+    private void setupAccountCombo() {
+        List<com.axora.model.Account> accts = new java.util.ArrayList<>(new com.axora.service.AccountService().getAccounts());
+        com.axora.model.Account all = new com.axora.model.Account(0, "All Accounts", com.axora.model.Account.Type.BANK, 0, "INR", "", false);
+        accts.add(0, all);
+        accountCombo.setItems(FXCollections.observableArrayList(accts));
+        accountCombo.setValue(all);
+    }
+
     private void setupTable() {
+        colAccount.setCellValueFactory(cd ->
+            new javafx.beans.property.SimpleStringProperty(
+                cd.getValue().getAccountName() == null ? "" : cd.getValue().getAccountName()));
+        colSource.setCellValueFactory(cd ->
+            new javafx.beans.property.SimpleStringProperty(
+                cd.getValue().isRecurring() ? "Recurring" : "Manual"));
         colDate.setCellValueFactory(cd ->
             new javafx.beans.property.SimpleStringProperty(
                 cd.getValue().getTxDate().toString()));
@@ -141,6 +157,7 @@ public class TransactionController {
         periodCombo.setValue("All Time");
         typeCombo.setValue("All");
         categoryCombo.getSelectionModel().selectFirst();
+        accountCombo.getSelectionModel().selectFirst();
         keywordField.clear();
         minAmountField.clear();
         maxAmountField.clear();
@@ -162,6 +179,10 @@ public class TransactionController {
         // Category
         Category cat = categoryCombo.getValue();
         if (cat != null && cat.getId() > 0) b.categoryId(cat.getId());
+
+        // Account
+        com.axora.model.Account acct = accountCombo.getValue();
+        if (acct != null && acct.id() > 0) b.accountId(acct.id());
 
         // Keyword
         String kw = keywordField.getText();

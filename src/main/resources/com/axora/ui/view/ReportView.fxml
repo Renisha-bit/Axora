@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.axora.ui.controller.ReportController"
+            fitToWidth="true" styleClass="scroll-pane-clean">
+    <VBox spacing="18" styleClass="page-content">
+        <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Label text="Reports" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="exportButton" text="Export CSV" styleClass="btn-secondary" onAction="#exportCsv"/>
+        </HBox>
+
+        <FlowPane styleClass="report-toolbar" hgap="10" vgap="8" alignment="CENTER_LEFT">
+            <Label text="Range" styleClass="form-label"/>
+            <ComboBox fx:id="presetCombo" styleClass="combo-clean" prefWidth="150"/>
+            <DatePicker fx:id="fromPicker" prefWidth="140"/>
+            <Label text="to" styleClass="form-label"/>
+            <DatePicker fx:id="toPicker" prefWidth="140"/>
+            <Label text="Account" styleClass="form-label"/>
+            <ComboBox fx:id="accountCombo" styleClass="combo-clean" prefWidth="170"/>
+        </FlowPane>
+
+        <Label fx:id="messageLabel" styleClass="error-label" visible="false" managed="false" wrapText="true"/>
+        <Label fx:id="noteLabel" styleClass="hint-label" visible="false" managed="false"/>
+
+        <HBox spacing="16">
+            <VBox styleClass="kpi-card, kpi-income" HBox.hgrow="ALWAYS">
+                <Label text="Income" styleClass="kpi-label"/>
+                <Label fx:id="incomeLabel" text="—" styleClass="kpi-value, kpi-positive"/>
+            </VBox>
+            <VBox styleClass="kpi-card, kpi-expense" HBox.hgrow="ALWAYS">
+                <Label text="Expenses" styleClass="kpi-label"/>
+                <Label fx:id="expenseLabel" text="—" styleClass="kpi-value, kpi-negative"/>
+            </VBox>
+            <VBox styleClass="kpi-card, kpi-net" HBox.hgrow="ALWAYS">
+                <Label text="Net savings" styleClass="kpi-label"/>
+                <Label fx:id="netLabel" text="—" styleClass="kpi-value"/>
+            </VBox>
+            <VBox styleClass="kpi-card, kpi-net" HBox.hgrow="ALWAYS">
+                <Label text="Savings rate" styleClass="kpi-label"/>
+                <Label fx:id="rateLabel" text="—" styleClass="kpi-value"/>
+            </VBox>
+        </HBox>
+
+        <VBox fx:id="emptyBox" alignment="CENTER" spacing="8" visible="false" managed="false" styleClass="chart-card">
+            <padding><Insets top="40" right="0" bottom="40" left="0"/></padding>
+            <Label text="No income or expenses in this date range." styleClass="empty-state-label"/>
+            <Label text="Try a wider range or add transactions. Budgets and account balances are still shown below." styleClass="empty-state-sublabel"/>
+        </VBox>
+
+        <VBox fx:id="chartsBox" spacing="18">
+            <HBox spacing="18">
+                <VBox styleClass="chart-card" HBox.hgrow="ALWAYS" spacing="8">
+                    <Label text="Income vs expenses" styleClass="card-title"/>
+                    <BarChart fx:id="incomeExpenseChart" prefHeight="260" legendVisible="true" animated="false">
+                        <xAxis><CategoryAxis/></xAxis>
+                        <yAxis><NumberAxis label="₹"/></yAxis>
+                    </BarChart>
+                </VBox>
+                <VBox styleClass="chart-card" HBox.hgrow="ALWAYS" spacing="8">
+                    <Label text="Net savings over time" styleClass="card-title"/>
+                    <LineChart fx:id="netChart" prefHeight="260" animated="false">
+                        <xAxis><CategoryAxis/></xAxis>
+                        <yAxis><NumberAxis label="₹"/></yAxis>
+                    </LineChart>
+                </VBox>
+            </HBox>
+            <HBox spacing="18">
+                <VBox styleClass="chart-card" HBox.hgrow="ALWAYS" spacing="8">
+                    <Label text="Monthly spending trend" styleClass="card-title"/>
+                    <LineChart fx:id="trendChart" prefHeight="260" legendVisible="false" animated="false">
+                        <xAxis><CategoryAxis/></xAxis>
+                        <yAxis><NumberAxis label="₹"/></yAxis>
+                    </LineChart>
+                </VBox>
+                <VBox styleClass="chart-card" HBox.hgrow="ALWAYS" spacing="8">
+                    <Label text="Spending by category" styleClass="card-title"/>
+                    <PieChart fx:id="categoryChart" prefHeight="260" legendSide="RIGHT" animated="false"/>
+                </VBox>
+            </HBox>
+            <VBox styleClass="chart-card" spacing="8">
+                <Label text="Monthly breakdown" styleClass="card-title"/>
+                <TableView fx:id="monthTable" prefHeight="200" styleClass="table-clean"/>
+            </VBox>
+        </VBox>
+
+        <VBox styleClass="chart-card" spacing="8">
+            <Label fx:id="budgetTitle" text="Budget vs actual" styleClass="card-title"/>
+            <TableView fx:id="budgetTable" prefHeight="190" styleClass="table-clean"/>
+        </VBox>
+
+        <VBox styleClass="chart-card" spacing="8">
+            <Label fx:id="balanceTitle" text="Account balances" styleClass="card-title"/>
+            <TableView fx:id="balanceTable" prefHeight="170" styleClass="table-clean"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

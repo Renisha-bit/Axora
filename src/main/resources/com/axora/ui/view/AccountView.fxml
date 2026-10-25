@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.axora.ui.controller.AccountController"
+            fitToWidth="true" styleClass="scroll-pane-clean">
+    <VBox spacing="20" styleClass="page-content">
+        <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Label text="Accounts" styleClass="page-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="⇄ Transfer" styleClass="btn-secondary" onAction="#openTransfer"/>
+            <Button text="+ New Account" styleClass="btn-primary" onAction="#openCreate"/>
+        </HBox>
+
+        <HBox fx:id="totalsBox" spacing="16"/>
+        <Label fx:id="noteLabel" styleClass="hint-label" visible="false" managed="false"/>
+
+        <VBox styleClass="chart-card" spacing="12">
+            <Label text="All accounts" styleClass="card-title"/>
+            <TableView fx:id="accountTable" prefHeight="230" styleClass="table-clean"/>
+            <Label text="Select an account to see its activity." styleClass="hint-label"/>
+        </VBox>
+
+        <TabPane tabClosingPolicy="UNAVAILABLE" prefHeight="330">
+            <Tab text="Account activity">
+                <VBox styleClass="chart-card" spacing="10">
+                    <Label fx:id="activityTitle" text="Activity" styleClass="card-title"/>
+                    <TableView fx:id="activityTable" VBox.vgrow="ALWAYS" styleClass="table-clean"/>
+                </VBox>
+            </Tab>
+            <Tab text="Transfers">
+                <VBox styleClass="chart-card" spacing="10">
+                    <Label text="Transfers between accounts (not counted as income or expenses)" styleClass="card-title"/>
+                    <TableView fx:id="transferTable" VBox.vgrow="ALWAYS" styleClass="table-clean"/>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </VBox>
+</ScrollPane>
