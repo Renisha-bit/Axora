@@ -38,15 +38,6 @@ public class CsvExporter {
         }
     }
 
-    /** Writes arbitrary rows (UTF-8 BOM, RFC 4180 escaping). A zero-length row produces a blank line. */
-    public void exportRows(List<String[]> rows, File target) throws IOException {
-        try (PrintWriter pw = new PrintWriter(
-                new OutputStreamWriter(new FileOutputStream(target), StandardCharsets.UTF_8))) {
-            pw.print('\uFEFF');
-            for (String[] row : rows) pw.println(row.length == 0 ? "" : csvRow(row));
-        }
-    }
-
     private String csvRow(String... fields) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < fields.length; i++) {

@@ -21,22 +21,8 @@ public class DatabaseManager {
     public static DatabaseManager getInstance() { return INSTANCE; }
 
     public synchronized void initialize() {
-        initialize(AppConfig.databasePath());
-    }
-
-    /** Opens (creating if needed) the database file at the given path and migrates it. */
-    public synchronized void initialize(java.nio.file.Path dbFile) {
-        open("jdbc:sqlite:" + dbFile.toAbsolutePath());
-    }
-
-    /** Opens a fresh, empty in-memory database (migrated). Intended for tests. */
-    public synchronized void initializeInMemory() {
-        open("jdbc:sqlite::memory:");
-    }
-
-    private void open(String url) {
-        close();
         try {
+            String url = "jdbc:sqlite:" + AppConfig.databasePath().toAbsolutePath();
             connection = DriverManager.getConnection(url);
             // Enable foreign keys on every connection
             try (Statement st = connection.createStatement()) {
@@ -47,37 +33,6 @@ public class DatabaseManager {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to open Axora database", e);
         }
-    }
-
-    private int txDepth = 0;
-
-    /**
-     * Runs the work atomically on the shared connection. Re-entrant: nested calls join the
-     * outermost transaction. Any exception rolls the whole unit back.
-     */
-    public synchronized <T> T inTransaction(java.util.function.Supplier<T> work) {
-        Connection c = getConnection();
-        boolean outermost = txDepth == 0;
-        try {
-            if (outermost) c.setAutoCommit(false);
-            txDepth++;
-            T result = work.get();
-            if (outermost) c.commit();
-            return result;
-        } catch (RuntimeException | Error e) {
-            if (outermost) { try { c.rollback(); } catch (SQLException ignored) {} }
-            throw e;
-        } catch (SQLException e) {
-            if (outermost) { try { c.rollback(); } catch (SQLException ignored) {} }
-            throw new RuntimeException(e);
-        } finally {
-            txDepth--;
-            if (outermost) { try { c.setAutoCommit(true); } catch (SQLException ignored) {} }
-        }
-    }
-
-    public synchronized void runInTransaction(Runnable work) {
-        inTransaction(() -> { work.run(); return null; });
     }
 
     public synchronized Connection getConnection() {
@@ -93,8 +48,6 @@ public class DatabaseManager {
                 connection.close();
             }
         } catch (SQLException ignored) {}
-        connection = null;
-        txDepth = 0;
     }
 
     // -----------------------------------------------------------------
@@ -105,8 +58,7 @@ public class DatabaseManager {
         createMetaTable();
         int version = getSchemaVersion();
         if (version < 1) { migration1(); setSchemaVersion(1); }
-        if (version < 2) { migration2(); setSchemaVersion(2); }
-        // Future: if (version < 3) { migration3(); setSchemaVersion(3); }
+        // Future: if (version < 2) { migration2(); setSchemaVersion(2); }
     }
 
     private void createMetaTable() throws SQLException {
@@ -172,125 +124,6 @@ public class DatabaseManager {
 
             // Seed default categories
             seedCategories(st);
-        }
-    }
-
-    /**
-     * Migration 2: accounts, transfers, budgets, recurring rules, savings goals.
-     * Adds account_id / recurring_rule_id to transactions and attaches every pre-existing
-     * transaction to a default account so no historical data is orphaned.
-     * Runs atomically: either the whole migration applies or none of it.
-     */
-    private void migration2() throws SQLException {
-        boolean oldAuto = connection.getAutoCommit();
-        connection.setAutoCommit(false);
-        try (Statement st = connection.createStatement()) {
-            st.execute("""
-                CREATE TABLE IF NOT EXISTS accounts (
-                    id                    INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name                  TEXT NOT NULL UNIQUE COLLATE NOCASE,
-                    type                  TEXT NOT NULL CHECK(type IN ('CASH','BANK','SAVINGS','CREDIT')),
-                    opening_balance_cents INTEGER NOT NULL DEFAULT 0,
-                    currency              TEXT NOT NULL DEFAULT 'INR',
-                    description           TEXT,
-                    is_default            INTEGER NOT NULL DEFAULT 0,
-                    created_at            TEXT NOT NULL DEFAULT (datetime('now'))
-                )
-            """);
-            st.execute("""
-                CREATE TABLE IF NOT EXISTS transfers (
-                    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                    from_account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT,
-                    to_account_id   INTEGER NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT,
-                    amount_cents    INTEGER NOT NULL CHECK(amount_cents > 0),
-                    transfer_date   TEXT NOT NULL,
-                    description     TEXT,
-                    created_at      TEXT NOT NULL DEFAULT (datetime('now')),
-                    CHECK(from_account_id <> to_account_id)
-                )
-            """);
-            st.execute("""
-                CREATE TABLE IF NOT EXISTS budgets (
-                    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name         TEXT NOT NULL,
-                    category_id  INTEGER REFERENCES categories(id) ON DELETE RESTRICT,
-                    amount_cents INTEGER NOT NULL CHECK(amount_cents > 0),
-                    period       TEXT NOT NULL CHECK(period IN ('WEEKLY','MONTHLY','CUSTOM')),
-                    start_date   TEXT,
-                    end_date     TEXT,
-                    created_at   TEXT NOT NULL DEFAULT (datetime('now'))
-                )
-            """);
-            st.execute("""
-                CREATE TABLE IF NOT EXISTS recurring_rules (
-                    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-                    type          TEXT NOT NULL CHECK(type IN ('INCOME','EXPENSE')),
-                    amount_cents  INTEGER NOT NULL CHECK(amount_cents > 0),
-                    category_id   INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
-                    account_id    INTEGER NOT NULL REFERENCES accounts(id) ON DELETE RESTRICT,
-                    description   TEXT,
-                    merchant      TEXT,
-                    frequency     TEXT NOT NULL CHECK(frequency IN ('DAILY','WEEKLY','MONTHLY','YEARLY')),
-                    start_date    TEXT NOT NULL,
-                    end_date      TEXT,
-                    generate_from TEXT NOT NULL,
-                    paused        INTEGER NOT NULL DEFAULT 0,
-                    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
-                )
-            """);
-            // One row per (rule, scheduled date): the idempotency ledger. It survives deletion
-            // of the generated transaction so a deleted occurrence is never regenerated.
-            st.execute("""
-                CREATE TABLE IF NOT EXISTS recurring_occurrences (
-                    rule_id         INTEGER NOT NULL REFERENCES recurring_rules(id) ON DELETE CASCADE,
-                    occurrence_date TEXT NOT NULL,
-                    transaction_id  INTEGER REFERENCES transactions(id) ON DELETE SET NULL,
-                    PRIMARY KEY (rule_id, occurrence_date)
-                )
-            """);
-            st.execute("""
-                CREATE TABLE IF NOT EXISTS savings_goals (
-                    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name         TEXT NOT NULL,
-                    target_cents INTEGER NOT NULL CHECK(target_cents > 0),
-                    target_date  TEXT NOT NULL,
-                    description  TEXT,
-                    start_date   TEXT NOT NULL,
-                    created_at   TEXT NOT NULL DEFAULT (datetime('now'))
-                )
-            """);
-            st.execute("""
-                CREATE TABLE IF NOT EXISTS goal_entries (
-                    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-                    goal_id      INTEGER NOT NULL REFERENCES savings_goals(id) ON DELETE CASCADE,
-                    entry_type   TEXT NOT NULL CHECK(entry_type IN ('CONTRIBUTION','WITHDRAWAL')),
-                    amount_cents INTEGER NOT NULL CHECK(amount_cents > 0),
-                    entry_date   TEXT NOT NULL,
-                    note         TEXT,
-                    created_at   TEXT NOT NULL DEFAULT (datetime('now'))
-                )
-            """);
-
-            st.execute("ALTER TABLE transactions ADD COLUMN account_id INTEGER REFERENCES accounts(id) ON DELETE RESTRICT");
-            st.execute("ALTER TABLE transactions ADD COLUMN recurring_rule_id INTEGER REFERENCES recurring_rules(id) ON DELETE SET NULL");
-
-            st.execute("CREATE INDEX IF NOT EXISTS idx_tx_account     ON transactions(account_id)");
-            st.execute("CREATE INDEX IF NOT EXISTS idx_tx_rule        ON transactions(recurring_rule_id)");
-            st.execute("CREATE INDEX IF NOT EXISTS idx_transfer_from  ON transfers(from_account_id)");
-            st.execute("CREATE INDEX IF NOT EXISTS idx_transfer_to    ON transfers(to_account_id)");
-            st.execute("CREATE INDEX IF NOT EXISTS idx_goal_entry     ON goal_entries(goal_id)");
-
-            // Default account + backfill of existing transactions (backward compatibility).
-            st.execute("INSERT INTO accounts(name,type,opening_balance_cents,currency,description,is_default) "
-                     + "VALUES('Cash','CASH',0,'INR','Default account',1)");
-            st.execute("UPDATE transactions SET account_id = (SELECT id FROM accounts WHERE is_default = 1) "
-                     + "WHERE account_id IS NULL");
-            connection.commit();
-        } catch (SQLException | RuntimeException e) {
-            connection.rollback();
-            throw e;
-        } finally {
-            connection.setAutoCommit(oldAuto);
         }
     }
 

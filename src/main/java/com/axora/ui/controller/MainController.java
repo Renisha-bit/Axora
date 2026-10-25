@@ -4,7 +4,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,6 +27,8 @@ public class MainController {
     @FXML private Button navReports;
     @FXML private Button navSettings;
 
+    private Node dashboardView;
+    private Node transactionView;
     private Node settingsView;
 
     private final Button[] allNavBtns = new Button[8];
@@ -39,32 +44,20 @@ public class MainController {
         allNavBtns[6] = navReports;
         allNavBtns[7] = navSettings;
 
-        settingsView = loadView("/com/axora/ui/view/SettingsView.fxml");
+        dashboardView   = loadView("/com/axora/ui/view/DashboardView.fxml");
+        transactionView = loadView("/com/axora/ui/view/TransactionView.fxml");
+        settingsView    = loadView("/com/axora/ui/view/SettingsView.fxml");
         showDashboard();
     }
 
-    // Data screens are reloaded on every visit so they always reflect the latest persisted data
-    // (e.g. the dashboard after a recurring rule generated transactions).
-    @FXML public void showDashboard()    { showFresh(navDashboard,    "/com/axora/ui/view/DashboardView.fxml"); }
-    @FXML public void showTransactions() { showFresh(navTransactions, "/com/axora/ui/view/TransactionView.fxml"); }
-    @FXML public void showBudgets()      { showFresh(navBudgets,      "/com/axora/ui/view/BudgetView.fxml"); }
-    @FXML public void showRecurring()    { showFresh(navRecurring,    "/com/axora/ui/view/RecurringView.fxml"); }
-    @FXML public void showAccounts()     { showFresh(navAccounts,     "/com/axora/ui/view/AccountView.fxml"); }
-    @FXML public void showSavings()      { showFresh(navSavings,      "/com/axora/ui/view/SavingsView.fxml"); }
-    @FXML public void showReports()      { showFresh(navReports,      "/com/axora/ui/view/ReportView.fxml"); }
-    @FXML public void showSettings()     { setActive(navSettings);    setContent(settingsView); }
-
-    private void showFresh(Button nav, String fxml) {
-        try {
-            Node view = loadView(fxml);
-            setActive(nav);
-            setContent(view);
-        } catch (IOException | RuntimeException e) {
-            e.printStackTrace();
-            new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR,
-                "Could not open this section: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage())).showAndWait();
-        }
-    }
+    @FXML public void showDashboard()    { setActive(navDashboard);    setContent(dashboardView);   }
+    @FXML public void showTransactions() { setActive(navTransactions);  setContent(transactionView); }
+    @FXML public void showSettings()     { setActive(navSettings);      setContent(settingsView);    }
+    @FXML public void showBudgets()      { showPlaceholder("Budgets", navBudgets); }
+    @FXML public void showRecurring()    { showPlaceholder("Recurring", navRecurring); }
+    @FXML public void showAccounts()     { showPlaceholder("Accounts", navAccounts); }
+    @FXML public void showSavings()      { showPlaceholder("Savings Goals", navSavings); }
+    @FXML public void showReports()      { showPlaceholder("Reports", navReports); }
 
     // ----------------------------------------------------------------
     // Helpers
@@ -81,6 +74,29 @@ public class MainController {
         if (!active.getStyleClass().contains("nav-active")) {
             active.getStyleClass().add("nav-active");
         }
+    }
+
+    private void showPlaceholder(String title, Button active) {
+        VBox page = new VBox(24);
+        page.setPadding(new Insets(32));
+        page.getStyleClass().add("page-content");
+
+        Label pageTitle = new Label(title);
+        pageTitle.getStyleClass().add("page-title");
+
+        VBox notice = new VBox(12);
+        notice.getStyleClass().add("chart-card");
+        Label noticeTitle = new Label(title);
+        noticeTitle.getStyleClass().add("card-title");
+        Label message = new Label(
+            "This section is not implemented yet. You can use the Dashboard and Transactions sections in the meantime.");
+        message.getStyleClass().add("results-label");
+        message.setWrapText(true);
+        notice.getChildren().addAll(noticeTitle, message);
+        page.getChildren().addAll(pageTitle, notice);
+
+        setActive(active);
+        setContent(page);
     }
 
     private Node loadView(String fxmlPath) throws IOException {

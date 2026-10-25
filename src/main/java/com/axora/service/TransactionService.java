@@ -1,12 +1,10 @@
 package com.axora.service;
 
-import com.axora.dao.AccountDao;
 import com.axora.dao.CategoryDao;
 import com.axora.dao.CategoryTotal;
 import com.axora.dao.MonthlyTotal;
 import com.axora.dao.TransactionDao;
 import com.axora.dao.TransactionFilter;
-import com.axora.dao.sqlite.SQLiteAccountDao;
 import com.axora.dao.sqlite.SQLiteCategoryDao;
 import com.axora.dao.sqlite.SQLiteTransactionDao;
 import com.axora.model.Category;
@@ -24,22 +22,16 @@ public class TransactionService {
 
     private final TransactionDao txDao;
     private final CategoryDao    catDao;
-    private final AccountDao     accountDao;   // null in legacy/test construction: no account validation
 
     /** Default constructor using SQLite implementations. */
     public TransactionService() {
-        this(new SQLiteTransactionDao(), new SQLiteCategoryDao(), new SQLiteAccountDao());
+        this(new SQLiteTransactionDao(), new SQLiteCategoryDao());
     }
 
     /** Injectable constructor for testing. */
     public TransactionService(TransactionDao txDao, CategoryDao catDao) {
-        this(txDao, catDao, null);
-    }
-
-    public TransactionService(TransactionDao txDao, CategoryDao catDao, AccountDao accountDao) {
         this.txDao  = txDao;
         this.catDao = catDao;
-        this.accountDao = accountDao;
     }
 
     // ----------------------------------------------------------------
@@ -51,26 +43,17 @@ public class TransactionService {
      * @return id of inserted record
      * @throws IllegalArgumentException if validation fails
      */
-    public long addTransaction(Transaction.Type type, String amountText, long categoryId,
-                               LocalDate date, String description, String merchant) {
-        return addTransaction(type, amountText, categoryId, date, description, merchant, 0L);
-    }
-
-    /** @param accountId account to book against; 0 = the default account */
     public long addTransaction(Transaction.Type type,
                                String amountText,
                                long categoryId,
                                LocalDate date,
                                String description,
-                               String merchant,
-                               long accountId) {
+                               String merchant) {
         List<String> errors = TransactionValidator.validate(type, amountText, categoryId, date, description);
         if (!errors.isEmpty()) throw new IllegalArgumentException(String.join("\n", errors));
         validateCategoryType(categoryId, type);
-        validateAccount(accountId);
 
         Transaction tx = new Transaction();
-        tx.setAccountId(accountId);
         tx.setType(type);
         tx.setAmountCents(TransactionValidator.parseCents(amountText));
         tx.setCategoryId(categoryId);
@@ -83,28 +66,19 @@ public class TransactionService {
     /**
      * Validates and updates an existing transaction.
      */
-    public void updateTransaction(long id, Transaction.Type type, String amountText, long categoryId,
-                                  LocalDate date, String description, String merchant) {
-        updateTransaction(id, type, amountText, categoryId, date, description, merchant, 0L);
-    }
-
-    /** @param accountId new account; 0 keeps the transaction's current account */
     public void updateTransaction(long id,
                                   Transaction.Type type,
                                   String amountText,
                                   long categoryId,
                                   LocalDate date,
                                   String description,
-                                  String merchant,
-                                  long accountId) {
+                                  String merchant) {
         List<String> errors = TransactionValidator.validate(type, amountText, categoryId, date, description);
         if (!errors.isEmpty()) throw new IllegalArgumentException(String.join("\n", errors));
         validateCategoryType(categoryId, type);
-        validateAccount(accountId);
 
         Transaction tx = txDao.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Transaction not found: " + id));
-        if (accountId > 0) tx.setAccountId(accountId);
         tx.setType(type);
         tx.setAmountCents(TransactionValidator.parseCents(amountText));
         tx.setCategoryId(categoryId);
@@ -112,11 +86,6 @@ public class TransactionService {
         tx.setDescription(description == null ? "" : description.trim());
         tx.setMerchant(merchant == null ? "" : merchant.trim());
         txDao.update(tx);
-    }
-
-    private void validateAccount(long accountId) {
-        if (accountId > 0 && accountDao != null && accountDao.findById(accountId).isEmpty())
-            throw new IllegalArgumentException("Please select a valid account.");
     }
 
     private void validateCategoryType(long categoryId, Transaction.Type type) {

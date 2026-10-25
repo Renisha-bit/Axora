@@ -34,12 +34,6 @@
         <ComboBox fx:id="categoryCombo" styleClass="combo-clean form-field" maxWidth="Infinity"/>
     </VBox>
 
-    <!-- Account -->
-    <VBox spacing="6">
-        <Label text="Account *" styleClass="form-label"/>
-        <ComboBox fx:id="accountCombo" styleClass="combo-clean form-field" maxWidth="Infinity"/>
-    </VBox>
-
     <!-- Date -->
     <VBox spacing="6">
         <Label text="Date *" styleClass="form-label"/>

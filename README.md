@@ -34,19 +34,6 @@ A polished, modern, local-first personal finance tracker built with JavaFX and S
 
 ---
 
-## Features — Phase 2
-
-- **Budgets** — overall or per-category limits, weekly (Mon–Sun), monthly or custom date range. Spending is computed from real *expense* transactions only (income and transfers never count). Progress bars turn amber at 80 % and red once the limit is exceeded. Duplicate/overlapping budgets are rejected.
-- **Recurring transactions** — daily / weekly / monthly / yearly rules for income and expenses. Due transactions are generated at app launch and whenever the Recurring screen is opened. Generation is idempotent (a ledger of processed dates), back-fills missed occurrences, handles month-end (31st → 30th/28th/29th without drifting) and never regenerates an occurrence you deleted. Pausing and resuming skips the paused period. Edits apply to future occurrences only. Rules, upcoming occurrences and generated history are shown on separate tabs; generated transactions are marked *Recurring* in Transactions.
-- **Accounts** — cash / bank / savings / credit accounts with opening balance and currency. Balances are always *derived* (opening + income − expenses ± transfers), so they stay consistent after edits and deletes. Transfers between accounts are stored separately and are never income or expenses. An account with transactions, transfers or recurring rules cannot be deleted. Existing data is attached to an automatically created default account called “Cash”.
-- **Savings goals** — target amount and date, contributions and withdrawals recorded in an append-only ledger, progress bar and an On track / Behind / Completed / Overdue status. Goal savings are intentionally **separate from account balances**.
-- **Reports** — selectable date range and account filter: income vs expenses, net savings over time, monthly spending trend, spending by category, budget vs actual and account balances, with CSV export.
-- **Dashboard** — balance, budget alerts, items due in 7 days and goal progress at a glance.
-
-**Known limitations:** no currency conversion (accounts in different currencies are totalled separately and transfers between them are refused); budgets and reports treat amounts as rupees.
-
----
-
 ## Tech Stack
 
 | Layer | Technology |
@@ -132,7 +119,6 @@ This file is a standard SQLite database. You can open it with [DB Browser for SQ
 - **Off-thread DB** — all database operations run in background `Task` threads; UI is never blocked.
 - **Prepared statements** — all user-supplied values use parameterized queries.
 - **Foreign keys ON** — enforced on every connection via `PRAGMA foreign_keys = ON`.
-- **Schema v2** — migration 2 adds accounts, transfers, budgets, recurring rules (+ occurrence ledger) and savings goals, and backfills every existing transaction onto a default account. Backups are format v2 and v1 backups still restore.
 
 ---
 
@@ -153,10 +139,9 @@ MIT — see [LICENSE](LICENSE)
 
 ## Roadmap
 
-- [x] Phase 2: Monthly budgets, category budgets, recurring transactions
-- [x] Phase 2: Financial accounts (cash, bank, savings, credit) and explicit transfers
-- [x] Phase 2: Savings goals with progress tracking
-- [x] Phase 2: Reports with charts and CSV export
+- [ ] Phase 2: Monthly budgets, category budgets, recurring transactions
+- [ ] Phase 2: Financial accounts (cash, bank, digital wallet) and explicit transfers
+- [ ] Phase 2: Savings goals with progress tracking
 - [ ] Phase 3: PDF monthly reports
 - [ ] Phase 3: Dark/light theme toggle
 - [ ] Phase 3: Custom categories

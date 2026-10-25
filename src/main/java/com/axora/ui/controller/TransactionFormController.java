@@ -23,7 +23,6 @@ public class TransactionFormController {
     private ToggleGroup    typeGroup;
     @FXML private TextField      amountField;
     @FXML private ComboBox<Category> categoryCombo;
-    @FXML private ComboBox<com.axora.model.Account> accountCombo;
     @FXML private DatePicker     datePicker;
     @FXML private TextField      descField;
     @FXML private TextField      merchantField;
@@ -31,7 +30,6 @@ public class TransactionFormController {
     @FXML private Button         saveBtn;
 
     private final TransactionService service = new TransactionService();
-    private final com.axora.service.AccountService accountService = new com.axora.service.AccountService();
     private Transaction editTarget;
     private Runnable    onSaved;
     private Stage       stage;
@@ -50,9 +48,6 @@ public class TransactionFormController {
         datePicker.setValue(LocalDate.now());
         typeGroup.selectedToggleProperty().addListener((obs, old, nw) -> refreshCategories());
         refreshCategories();
-        List<com.axora.model.Account> accts = accountService.getAccounts();
-        accountCombo.setItems(FXCollections.observableArrayList(accts));
-        if (!accts.isEmpty()) accountCombo.setValue(accts.get(0));   // default account first
     }
 
     /** Call with null for "add" mode, or a Transaction for "edit" mode. */
@@ -77,10 +72,6 @@ public class TransactionFormController {
             .filter(c -> c.getId() == tx.getCategoryId())
             .findFirst()
             .ifPresent(categoryCombo::setValue);
-        accountCombo.getItems().stream()
-            .filter(a -> a.id() == tx.getAccountId())
-            .findFirst()
-            .ifPresent(accountCombo::setValue);
     }
 
     public void setOnSaved(Runnable callback) { this.onSaved = callback; }
@@ -96,7 +87,6 @@ public class TransactionFormController {
         Transaction.Type type = getSelectedType();
         String amountText     = amountField.getText();
         Category cat          = categoryCombo.getValue();
-        long accountId        = accountCombo.getValue() == null ? 0 : accountCombo.getValue().id();
         long categoryId       = cat == null ? 0 : cat.getId();
         LocalDate date        = datePicker.getValue();
         String description    = descField.getText();
@@ -111,10 +101,10 @@ public class TransactionFormController {
 
         try {
             if (editTarget == null) {
-                service.addTransaction(type, amountText, categoryId, date, description, merchant, accountId);
+                service.addTransaction(type, amountText, categoryId, date, description, merchant);
             } else {
                 service.updateTransaction(editTarget.getId(), type, amountText,
-                                          categoryId, date, description, merchant, accountId);
+                                          categoryId, date, description, merchant);
             }
             if (onSaved != null) onSaved.run();
             if (stage != null)   stage.close();

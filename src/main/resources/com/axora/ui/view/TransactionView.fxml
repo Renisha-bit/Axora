@@ -26,8 +26,6 @@
             <ComboBox fx:id="typeCombo" promptText="All Types" styleClass="combo-clean" prefWidth="130"/>
             <!-- Category filter -->
             <ComboBox fx:id="categoryCombo" promptText="All Categories" styleClass="combo-clean" prefWidth="170"/>
-            <!-- Account filter -->
-            <ComboBox fx:id="accountCombo" promptText="All Accounts" styleClass="combo-clean" prefWidth="160"/>
             <!-- Keyword -->
             <TextField fx:id="keywordField" promptText="Search description / merchant…"
                        styleClass="text-field-clean" prefWidth="220"/>
@@ -51,15 +49,13 @@
     <!-- Transaction table -->
     <TableView fx:id="transactionTable" VBox.vgrow="ALWAYS" styleClass="table-clean">
         <columns>
-            <TableColumn fx:id="colDate"     text="Date"        prefWidth="95"/>
-            <TableColumn fx:id="colType"     text="Type"        prefWidth="80"/>
-            <TableColumn fx:id="colCategory" text="Category"    prefWidth="130"/>
-            <TableColumn fx:id="colDesc"     text="Description" prefWidth="150"/>
-            <TableColumn fx:id="colMerchant" text="Merchant"    prefWidth="100"/>
-            <TableColumn fx:id="colAccount"  text="Account"     prefWidth="100"/>
-            <TableColumn fx:id="colSource"   text="Source"      prefWidth="85"/>
-            <TableColumn fx:id="colAmount"   text="Amount"      prefWidth="105" style="-fx-alignment: CENTER_RIGHT;"/>
-            <TableColumn fx:id="colActions"  text=""            prefWidth="120" minWidth="120"/>
+            <TableColumn fx:id="colDate"     text="Date"        prefWidth="105"/>
+            <TableColumn fx:id="colType"     text="Type"        prefWidth="90"/>
+            <TableColumn fx:id="colCategory" text="Category"    prefWidth="160"/>
+            <TableColumn fx:id="colDesc"     text="Description" prefWidth="240"/>
+            <TableColumn fx:id="colMerchant" text="Merchant"    prefWidth="140"/>
+            <TableColumn fx:id="colAmount"   text="Amount"      prefWidth="130" style="-fx-alignment: CENTER_RIGHT;"/>
+            <TableColumn fx:id="colActions"  text=""            prefWidth="100"/>
         </columns>
         <placeholder>
             <VBox alignment="CENTER" spacing="8">

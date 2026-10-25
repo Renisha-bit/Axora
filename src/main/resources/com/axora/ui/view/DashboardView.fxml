@@ -39,30 +39,6 @@
             </VBox>
         </HBox>
 
-        <!-- Overview of the other modules (always current, independent of the period filter) -->
-        <HBox spacing="16">
-            <VBox styleClass="kpi-card,kpi-net" HBox.hgrow="ALWAYS" spacing="2">
-                <Label text="Total Balance" styleClass="kpi-label"/>
-                <Label fx:id="lblBalance" text="—" styleClass="kpi-value"/>
-                <Label fx:id="lblBalanceSub" text="" styleClass="item-sub"/>
-            </VBox>
-            <VBox styleClass="kpi-card,kpi-net" HBox.hgrow="ALWAYS" spacing="2">
-                <Label text="Budgets" styleClass="kpi-label"/>
-                <Label fx:id="lblBudgets" text="—" styleClass="kpi-value"/>
-                <Label fx:id="lblBudgetsSub" text="" styleClass="item-sub"/>
-            </VBox>
-            <VBox styleClass="kpi-card,kpi-net" HBox.hgrow="ALWAYS" spacing="2">
-                <Label text="Due in 7 days" styleClass="kpi-label"/>
-                <Label fx:id="lblUpcoming" text="—" styleClass="kpi-value"/>
-                <Label fx:id="lblUpcomingSub" text="" styleClass="item-sub"/>
-            </VBox>
-            <VBox styleClass="kpi-card,kpi-net" HBox.hgrow="ALWAYS" spacing="2">
-                <Label text="Savings Goals" styleClass="kpi-label"/>
-                <Label fx:id="lblGoals" text="—" styleClass="kpi-value"/>
-                <Label fx:id="lblGoalsSub" text="" styleClass="item-sub"/>
-            </VBox>
-        </HBox>
-
         <!-- Charts row -->
         <HBox spacing="16" minHeight="280">
             <!-- Category pie chart -->
