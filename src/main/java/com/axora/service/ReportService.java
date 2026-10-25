@@ -1,14 +1,21 @@
 package com.axora.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.axora.dao.AnalyticsDao;
 import com.axora.dao.CategoryTotal;
 import com.axora.dao.MonthlyTotal;
 import com.axora.dao.sqlite.SQLiteAnalyticsDao;
-import com.axora.model.*;
-
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.*;
+import com.axora.model.Account;
+import com.axora.model.AccountBalance;
+import com.axora.model.BudgetStatus;
+import com.axora.model.Transaction;
 
 /**
  * Builds financial reports for a date range. Everything is derived from persisted transactions
@@ -46,7 +53,8 @@ public class ReportService {
     public FinancialReport build(LocalDate from, LocalDate to, Long accountId) {
         if (from == null || to == null) throw new IllegalArgumentException("Select both a start and an end date.");
         if (to.isBefore(from)) throw new IllegalArgumentException("The end date cannot be before the start date.");
-        if (YearMonth.from(from).until(YearMonth.from(to), java.time.temporal.ChronoUnit.MONTHS) >= MAX_MONTHS)
+long months = YearMonth.from(from).until(YearMonth.from(to), java.time.temporal.ChronoUnit.MONTHS);
+if (months >= MAX_MONTHS)
             throw new IllegalArgumentException("Please choose a range of at most " + MAX_MONTHS / 12 + " years.");
 
         long income  = analytics.sumCents(Transaction.Type.INCOME,  null, accountId, from, to);
@@ -67,7 +75,7 @@ public class ReportService {
         if (accountId != null) balances = balances.stream().filter(b -> b.account().id() == accountId).toList();
         Map<String, Long> totals = new TreeMap<>();
         for (AccountBalance b : balances) totals.merge(b.account().currency(), b.balanceCents(), Long::sum);
-        boolean mixed = accounts.getAccounts().stream().map(Account::currency).distinct().count() > 1;
+boolean mixed = accounts.getAccounts().stream().map(Account::currency).distinct().count() > 1;
 
         return new FinancialReport(from, to, accountId, income, expense, income - expense, rows,
             analytics.expenseByCategory(accountId, from, to), budgets.statuses(to, null),

@@ -462,6 +462,7 @@
     -fx-background-color: #FFEBEE;
 }
 
+
 /* =====================================================================
    Phase 2 modules — budgets, recurring, accounts, savings goals, reports
    (reuses the palette above: purple #C5B3D3 / #2D2340, success #4CAF50, danger #E57373)
@@ -526,3 +527,5 @@
 
 /* ── Report toolbar ──────────────────────────────────────────────── */
 .report-toolbar { -fx-background-color: white; -fx-background-radius: 14; -fx-padding: 12 16 12 16; }
+
+

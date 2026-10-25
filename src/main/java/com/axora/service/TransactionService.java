@@ -1,5 +1,8 @@
 package com.axora.service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import com.axora.dao.AccountDao;
 import com.axora.dao.CategoryDao;
 import com.axora.dao.CategoryTotal;
@@ -12,9 +15,6 @@ import com.axora.dao.sqlite.SQLiteTransactionDao;
 import com.axora.model.Category;
 import com.axora.model.Transaction;
 import com.axora.validation.TransactionValidator;
-
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Business-logic layer for transactions.
@@ -67,7 +67,6 @@ public class TransactionService {
         List<String> errors = TransactionValidator.validate(type, amountText, categoryId, date, description);
         if (!errors.isEmpty()) throw new IllegalArgumentException(String.join("\n", errors));
         validateCategoryType(categoryId, type);
-        validateAccount(accountId);
 
         Transaction tx = new Transaction();
         tx.setAccountId(accountId);
@@ -100,7 +99,6 @@ public class TransactionService {
         List<String> errors = TransactionValidator.validate(type, amountText, categoryId, date, description);
         if (!errors.isEmpty()) throw new IllegalArgumentException(String.join("\n", errors));
         validateCategoryType(categoryId, type);
-        validateAccount(accountId);
 
         Transaction tx = txDao.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Transaction not found: " + id));
@@ -112,11 +110,6 @@ public class TransactionService {
         tx.setDescription(description == null ? "" : description.trim());
         tx.setMerchant(merchant == null ? "" : merchant.trim());
         txDao.update(tx);
-    }
-
-    private void validateAccount(long accountId) {
-        if (accountId > 0 && accountDao != null && accountDao.findById(accountId).isEmpty())
-            throw new IllegalArgumentException("Please select a valid account.");
     }
 
     private void validateCategoryType(long categoryId, Transaction.Type type) {
