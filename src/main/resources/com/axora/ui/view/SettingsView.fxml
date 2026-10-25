@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.axora.ui.controller.SettingsController"
+            fitToWidth="true" styleClass="scroll-pane-clean">
+
+    <VBox spacing="24" styleClass="page-content">
+        <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+        <Label text="Settings" styleClass="page-title"/>
+
+        <!-- Data Portability Section -->
+        <VBox styleClass="chart-card" spacing="16">
+            <Label text="Data Portability" styleClass="card-title"/>
+
+            <!-- Backup -->
+            <VBox spacing="8">
+                <Label text="Backup" styleClass="form-label"/>
+                <Label text="Export all your transactions and categories to a JSON file. Keep this file safe — it can be used to restore your data."
+                       styleClass="settings-description" wrapText="true"/>
+                <HBox spacing="12">
+                    <Button text="Export Backup (JSON)" styleClass="btn-secondary" onAction="#exportBackup"/>
+                </HBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Restore -->
+            <VBox spacing="8">
+                <Label text="Restore" styleClass="form-label"/>
+                <Label text="Restore from a JSON backup file. WARNING: This will replace ALL current data. This action cannot be undone."
+                       styleClass="settings-description-warn" wrapText="true"/>
+                <HBox spacing="12">
+                    <Button text="Restore from Backup…" styleClass="btn-ghost" onAction="#importBackup"/>
+                </HBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- CSV Export -->
+            <VBox spacing="8">
+                <Label text="CSV Export" styleClass="form-label"/>
+                <Label text="Export all transactions as a CSV file (UTF-8, compatible with Excel and Google Sheets)."
+                       styleClass="settings-description" wrapText="true"/>
+                <HBox spacing="12">
+                    <Button text="Export All Transactions (CSV)" styleClass="btn-ghost" onAction="#exportAllCsv"/>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <!-- Status label -->
+        <Label fx:id="statusLabel" text="" styleClass="settings-status" wrapText="true" visible="false"/>
+
+        <!-- App Info Section -->
+        <VBox styleClass="chart-card" spacing="8">
+            <Label text="About Axora" styleClass="card-title"/>
+            <Label text="Axora — Value in every choice. Balance in every step." styleClass="settings-description"/>
+            <Label text="Version 1.0.0 MVP  ·  Data stored in: %APPDATA%\Axora\axora.db" styleClass="settings-meta"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

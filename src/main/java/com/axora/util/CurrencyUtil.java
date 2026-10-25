@@ -7,14 +7,15 @@ import java.util.Locale;
 /** Currency formatting utilities for INR. */
 public final class CurrencyUtil {
 
-    private static final Locale INR_LOCALE = new Locale("en", "IN");
-
     private CurrencyUtil() {}
 
     /** Formats cents as "₹1,23,456.78" */
     public static String format(long cents) {
         BigDecimal amount = BigDecimal.valueOf(cents, 2);
-        return "₹" + String.format("%,.2f", amount.doubleValue());
+        NumberFormat formatter = NumberFormat.getNumberInstance(Locale.of("en", "IN"));
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMaximumFractionDigits(2);
+        return "₹" + formatter.format(amount);
     }
 
     /** Formats cents with sign prefix for net cash flow. */

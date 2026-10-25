@@ -10,7 +10,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -29,8 +28,6 @@ public class DashboardController {
     @FXML private PieChart              categoryPieChart;
     @FXML private Label                 pieEmptyLabel;
     @FXML private BarChart<String, Number> monthlyBarChart;
-    @FXML private CategoryAxis          barXAxis;
-    @FXML private NumberAxis            barYAxis;
     @FXML private Label                 barEmptyLabel;
     @FXML private TableView<Transaction> recentTable;
     @FXML private TableColumn<Transaction, String> colDate, colType, colCategory, colDesc, colAmount;
@@ -111,9 +108,10 @@ public class DashboardController {
         };
 
         task.setOnSucceeded(e -> applyData(task.getValue()));
-        task.setOnFailed(e -> {
-            task.getException().printStackTrace();
-        });
+        task.setOnFailed(e -> new Alert(
+            Alert.AlertType.ERROR,
+            "Failed to load dashboard data: " + task.getException()
+        ).showAndWait());
 
         Thread t = new Thread(task, "axora-dashboard");
         t.setDaemon(true);
@@ -169,7 +167,8 @@ public class DashboardController {
             incomeSeries.getData().add(new XYChart.Data<>(mo, mt.incomeCents() / 100.0));
             expenseSeries.getData().add(new XYChart.Data<>(mo, mt.expenseCents() / 100.0));
         }
-        monthlyBarChart.getData().addAll(incomeSeries, expenseSeries);
+        monthlyBarChart.getData().add(incomeSeries);
+        monthlyBarChart.getData().add(expenseSeries);
     }
 
     // ----------------------------------------------------------------

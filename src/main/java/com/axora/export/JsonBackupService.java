@@ -1,15 +1,12 @@
 package com.axora.export;
 
 import com.axora.dao.sqlite.DatabaseManager;
-import com.axora.model.Category;
-import com.axora.model.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

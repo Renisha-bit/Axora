@@ -216,7 +216,8 @@ public class TransactionController {
             transactionTable.setItems(FXCollections.observableArrayList(list));
             resultsLabel.setText(list.size() + " transaction" + (list.size() == 1 ? "" : "s"));
         });
-        task.setOnFailed(e -> task.getException().printStackTrace());
+        task.setOnFailed(e -> showError(
+            "Failed to load transactions: " + task.getException()));
         Thread t = new Thread(task, "axora-tx-load");
         t.setDaemon(true);
         t.start();

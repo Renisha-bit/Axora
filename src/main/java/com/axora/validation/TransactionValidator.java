@@ -34,6 +34,12 @@ public final class TransactionValidator {
                 // Max 10 digits before decimal (avoid overflow)
                 if (amount.precision() - amount.scale() > 10) {
                     errors.add("Amount is too large.");
+                } else {
+                    try {
+                        amount.movePointRight(2).longValueExact();
+                    } catch (ArithmeticException e) {
+                        errors.add("Amount cannot include fractions of a cent.");
+                    }
                 }
             } catch (NumberFormatException e) {
                 errors.add("Amount must be a valid number (e.g. 1500.00).");

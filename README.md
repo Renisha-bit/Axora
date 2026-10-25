@@ -38,7 +38,7 @@ A polished, modern, local-first personal finance tracker built with JavaFX and S
 
 | Layer | Technology |
 |---|---|
-| Language | Java 21 LTS |
+| Language | Java 25 LTS |
 | UI | JavaFX 21 + FXML + CSS |
 | Build | Apache Maven 3.9 |
 | Database | SQLite via `sqlite-jdbc` |
@@ -72,8 +72,9 @@ src/main/java/com/axora/
 
 ### Prerequisites
 
-- **JDK 21+** (tested with Oracle JDK 21 and 27)
+- **JDK 25 LTS**
 - **Maven 3.8+** — or use the included `run.bat` which uses the bundled Maven at `C:\tools\apache-maven-3.9.6`
+- For Windows Quick Launch, set `JAVA_HOME` to your JDK 25 installation before running `run.bat`.
 
 ### Build & Run
 

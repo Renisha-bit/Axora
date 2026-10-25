@@ -51,6 +51,7 @@ public class TransactionService {
                                String merchant) {
         List<String> errors = TransactionValidator.validate(type, amountText, categoryId, date, description);
         if (!errors.isEmpty()) throw new IllegalArgumentException(String.join("\n", errors));
+        validateCategoryType(categoryId, type);
 
         Transaction tx = new Transaction();
         tx.setType(type);
@@ -74,6 +75,7 @@ public class TransactionService {
                                   String merchant) {
         List<String> errors = TransactionValidator.validate(type, amountText, categoryId, date, description);
         if (!errors.isEmpty()) throw new IllegalArgumentException(String.join("\n", errors));
+        validateCategoryType(categoryId, type);
 
         Transaction tx = txDao.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Transaction not found: " + id));
@@ -84,6 +86,18 @@ public class TransactionService {
         tx.setDescription(description == null ? "" : description.trim());
         tx.setMerchant(merchant == null ? "" : merchant.trim());
         txDao.update(tx);
+    }
+
+    private void validateCategoryType(long categoryId, Transaction.Type type) {
+        Category category = catDao.findById(categoryId)
+            .orElseThrow(() -> new IllegalArgumentException("Please select a valid category."));
+        Category.CategoryType expectedType = type == Transaction.Type.INCOME
+            ? Category.CategoryType.INCOME : Category.CategoryType.EXPENSE;
+        if (category.getType() != Category.CategoryType.BOTH
+                && category.getType() != expectedType) {
+            throw new IllegalArgumentException(
+                "Selected category is not valid for this transaction type.");
+        }
     }
 
     public void deleteTransaction(long id) {
